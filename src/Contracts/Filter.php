@@ -7,6 +7,8 @@ use Intervention\Image\Image;
 interface Filter
 {
     /**
+     * process the instance of image and return it again
+     *
      * @param Image $image
      * @param array $options
      * @return Image

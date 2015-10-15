@@ -5,7 +5,7 @@ namespace Ebess\ImageService\Filters;
 use Ebess\ImageService\Contracts\Filter;
 use Intervention\Image\Image;
 
-class FitFilter implements Filter
+class GrayScaleFilter implements Filter
 {
     /**
      * @param Image $image
@@ -14,6 +14,6 @@ class FitFilter implements Filter
      */
     public function process(Image $image, array $options)
     {
-        return $image->fit($options['box'][0], $options['box'][1]);
+        return $image->greyscale();
     }
 }
