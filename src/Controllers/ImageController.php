@@ -34,15 +34,14 @@ class ImageController extends Controller
     /**
      * @param string $filterName
      * @param string $hash
+     * @param string $name
      * @return mixed
      */
-    public function show($filterName, $hash)
+    public function show($filterName, $hash, $name)
     {
         $filterData = config('image-service.filters.' . $filterName);
-        $filterCheckHash = md5(json_encode(isset($filterData['options']) ? $filterData['options'] : []));
-
-        $pathname = config('image-service.path') . '/' . $hash;
-        $pathnameFilter = config('image-service.path') . '/' . $filterName . '/' . $filterCheckHash . '/' . $hash;
+        $pathname = implode('/', [config('image-service.path'), 'original', $hash, $name]);
+        $pathnameFilter = implode('/', [config('image-service.path'), $filterName, $hash, $name]);
         $disk = $this->filesystem->disk(config('image-service.disk'));
 
         // if filter already used

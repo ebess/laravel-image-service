@@ -46,9 +46,9 @@ class ImageHandler implements Handler
      */
     public function upload($image, $filename, array $options = [])
     {
-        $hash = str_random() . '-' . $filename;
+        $hash = str_random() . '/' . $filename;
         $this->filesystem->put(
-            config('image-service.path') . '/' . $hash,
+            implode('/', [config('image-service.path'), 'original', $hash]),
             $this->imageManager->make($image)->encode(null, 100)
         );
 
