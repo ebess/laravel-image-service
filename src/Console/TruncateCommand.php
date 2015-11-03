@@ -45,10 +45,15 @@ class TruncateCommand extends Command
             $this->filesystem->deleteDirectory(config('image-service.path') . '/' . $this->option('filter'));
             $this->info('Deleted all cached images for "'.$this->option('filter').'" filter.');
         } elseif ($this->option('cached')) {
-            foreach ($this->filesystem->allDirectories(config('image-service.path')) as $dir) {
-                $this->filesystem->deleteDirectory($dir);
+            foreach ($this->filesystem->directories(config('image-service.path')) as $dir) {
+
+                // don't delete the original source image
+                if (!preg_match("/original$/mi", $dir)) {
+                    $this->filesystem->deleteDirectory($dir);
+                }
+
             }
-            $this->info('Deleted all cached images');
+            $this->info('Deleted all cached images.');
         } else {
             $this->filesystem->deleteDirectory(config('image-service.path'));
             $this->info('All images has been deleted.');
