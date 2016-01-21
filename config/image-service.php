@@ -10,7 +10,7 @@ return [
     /**
      * root path for storing the images
      */
-    'path' => '/images',
+    'path' => 'images',
 
     /**
      * filter definitions

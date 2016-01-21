@@ -5,6 +5,16 @@ namespace Ebess\ImageService\Contracts;
 interface Handler
 {
     /**
+     * create filtered image
+     *
+     * @param string|ImageDeliverable $hash
+     * @param string $filename
+     * @param string[] $filters
+     * @return mixed
+     */
+    public function create($hash, $filename, $filters);
+
+    /**
      * uploads an image with given filename and options
      *
      * @param mixed $image
@@ -17,7 +27,7 @@ interface Handler
     /**
      * deletes all saved image data for given hash
      *
-     * @param string $hash
+     * @param string|ImageDeliverable $hash
      * @return mixed
      */
     public function remove($hash);
@@ -25,7 +35,7 @@ interface Handler
     /**
      * delivery the proper url for image with given hash and filter name
      *
-     * @param string|object $hash
+     * @param string|ImageDeliverable $hash
      * @param string|null $filterName
      * @return string
      */

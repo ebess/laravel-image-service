@@ -42,8 +42,10 @@ class TruncateCommand extends Command
     public function handle()
     {
         if ($this->option('filter')) {
+
             $this->filesystem->deleteDirectory(config('image-service.path') . '/' . $this->option('filter'));
             $this->info('Deleted all cached images for "'.$this->option('filter').'" filter.');
+
         } elseif ($this->option('cached')) {
             foreach ($this->filesystem->directories(config('image-service.path')) as $dir) {
 

@@ -2,10 +2,10 @@
 
 namespace Ebess\ImageService\Controllers;
 
-use Ebess\ImageService\Contracts\Filter;
 use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Routing\Controller;
 use Intervention\Image\ImageManager;
+use Ebess\ImageService\Contracts\Handler as ImageServiceHandler;
 
 class ImageController extends Controller
 {
@@ -20,15 +20,23 @@ class ImageController extends Controller
     protected $filesystem;
 
     /**
+     * @var ImageServiceHandler
+     */
+    protected $imageService;
+
+    /**
      * @param ImageManager $imageManager
      * @param Factory $filesystem
+     * @param ImageServiceHandler $imageService
      */
     public function __construct(
         ImageManager $imageManager,
-        Factory $filesystem
+        Factory $filesystem,
+        ImageServiceHandler $imageService
     ) {
         $this->imageManager = $imageManager;
         $this->filesystem = $filesystem;
+        $this->imageService = $imageService;
     }
 
     /**
@@ -39,32 +47,9 @@ class ImageController extends Controller
      */
     public function show($filterName, $hash, $name)
     {
-        $filterData = config('image-service.filters.' . $filterName);
-        $pathname = implode('/', [config('image-service.path'), 'original', $hash, $name]);
-        $pathnameFilter = implode('/', [config('image-service.path'), $filterName, $hash, $name]);
-        $disk = $this->filesystem->disk(config('image-service.disk'));
+        // filter image
+        $filteredImages = $this->imageService->create($hash, $name, $filterName);
 
-        // if filter already used
-        if ($disk->exists($pathnameFilter)) {
-            return $this->imageManager->make($disk->get($pathnameFilter))
-                ->response();
-        }
-
-        // apply filter on image
-        $image = $this->imageManager->make($disk->get($pathname));
-
-        /** @var Filter $filter */
-        $filter = app('image.filters.' . $filterData['type']);
-
-        // apply filter & cache the filtered image
-        $image = $filter->process($image, isset($filterData['options']) ? $filterData['options'] : []);
-
-        // cache if needed
-        if (isset($filterData['cache']) && $filterData['cache']) {
-            $disk->makeDirectory(config('image-service.path') . '/' . $filterName);
-            $disk->put($pathnameFilter, $image->encode(null, 100));
-        }
-
-        return $image->response();
+        return $filteredImages[$filterName]->response();
     }
 }

@@ -42,7 +42,7 @@ class ImageServiceProvider extends ServiceProvider
         );
 
         $this->app->bind('image-service.filesystem', function() {
-            return $this->app->make('Illuminate\Contracts\Filesystem\Factory')->disk('image-service');
+            return $this->app->make('Illuminate\Contracts\Filesystem\Factory')->disk(config('image-service.disk'));
         });
 
         $this->app->singleton('Ebess\ImageService\Contracts\Handler', function() {
